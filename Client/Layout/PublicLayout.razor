@@ -1,49 +1,29 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="public-layout">
-    <header class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+<div class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="/">MoneyRate</a>
-            <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
+            <a class="navbar-brand" href="/">SmartForexReminder</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
-            <div class="@NavMenuCssClass">
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#features">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#pricing">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="/signup">Sign Up</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/pricing">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
                 </ul>
             </div>
         </div>
-    </header>
+    </nav>
 
-    <main>
+    <main class="flex-fill">
         @Body
     </main>
-
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container text-center">
-            <p>&copy; @DateTime.Now.Year MoneyRate. All rights reserved.</p>
+    <footer class="bg-secondary text-white text-center py-2 mt-auto border-top">
+        <div class="container">
+            <p class="mb-0">&copy; @DateTime.Now.Year SmartForexReminder. All rights reserved.</p>
+            <small class="text-light">Built with ❤️ using Blazor</small>
         </div>
     </footer>
 </div>
-
-@code {
-    private bool collapseNavMenu = true;
-    private string NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse" : "navbar-collapse";
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
-}

@@ -1,0 +1,39 @@
+﻿@page "/login"
+@layout PublicLayout
+@inject NavigationManager Navigation
+
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2>Welcome back to SmartForexReminder</h2>
+        <p class="text-muted">
+            Log in to access personalized alerts, rate predictions, and community insights to optimize your withdrawals.
+        </p>
+    </div>
+
+    <div class="login-buttons d-flex flex-column align-items-center gap-3">
+        <button class="btn btn-dark px-4 py-2" @onclick="LoginWithGitHub">
+            <i class="bi bi-github me-2"></i> Login with GitHub
+        </button>
+        <button class="btn btn-danger px-4 py-2" @onclick="LoginWithGoogle">
+            <i class="bi bi-google me-2"></i> Login with Google
+        </button>
+    </div>
+
+    <div class="text-center mt-4">
+        <small class="text-muted">
+            We never post on your behalf or access private data. Authentication is handled securely via your chosen provider.
+        </small>
+    </div>
+</div>
+
+@code {
+    private void LoginWithGitHub()
+    {
+        Navigation.NavigateTo("/.auth/login/github", forceLoad: true);
+    }
+
+    private void LoginWithGoogle()
+    {
+        Navigation.NavigateTo("/.auth/login/google", forceLoad: true);
+    }
+}

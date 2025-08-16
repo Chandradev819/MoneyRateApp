@@ -1,23 +1,31 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="private-layout flex">
-    <aside class="w-64 bg-gray-800 text-white min-h-screen p-4">
-        <h2 class="text-lg font-bold mb-4">Dashboard</h2>
+<div class="main-layout">
+    <aside class="sidebar">
         <nav>
-            <a href="/dashboard" class="block py-2">Home</a>
-            <a href="/alerts" class="block py-2">Rate Alerts</a>
-            <a href="/profile" class="block py-2">Profile</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/alerts">My Alerts</a>
+            <a href="/settings">Settings</a>
         </nav>
     </aside>
 
-    <div class="flex-1">
-        <header class="bg-white shadow p-4 flex justify-between items-center">
-            <h1 class="text-xl">MoneyRate Dashboard</h1>
-            <button class="bg-red-500 text-white px-4 py-1 rounded">Logout</button>
+    <section class="main-content">
+        <header class="topbar">
+            <span>Hello, @UserName</span>
+            <button @onclick="Logout">Logout</button>
         </header>
 
-        <main class="p-6">
+        <main>
             @Body
         </main>
-    </div>
+    </section>
 </div>
+
+@code {
+    [Parameter] public string UserName { get; set; } = "Chandradev";
+
+    private void Logout()
+    {
+        // Add logout logic here
+    }
+}
