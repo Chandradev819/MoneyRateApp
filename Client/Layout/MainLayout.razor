@@ -1,20 +1,23 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<div class="private-layout flex">
+    <aside class="w-64 bg-gray-800 text-white min-h-screen p-4">
+        <h2 class="text-lg font-bold mb-4">Dashboard</h2>
+        <nav>
+            <a href="/dashboard" class="block py-2">Home</a>
+            <a href="/alerts" class="block py-2">Rate Alerts</a>
+            <a href="/profile" class="block py-2">Profile</a>
+        </nav>
+    </aside>
 
-    <main>
-        <div class="top-row px-4 d-flex justify-content-between align-items-center">
-            <!-- Install PWA Button -->
-            <button id="installPwaBtn" class="btn btn-primary" style="display:none;">
-                📲 Install App
-            </button>
-        </div>
+    <div class="flex-1">
+        <header class="bg-white shadow p-4 flex justify-between items-center">
+            <h1 class="text-xl">MoneyRate Dashboard</h1>
+            <button class="bg-red-500 text-white px-4 py-1 rounded">Logout</button>
+        </header>
 
-        <article class="content px-4">
+        <main class="p-6">
             @Body
-        </article>
-    </main>
+        </main>
+    </div>
 </div>
