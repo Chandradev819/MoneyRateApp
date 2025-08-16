@@ -1,0 +1,24 @@
+{
+  "name": "MoneyRate - Smart Currency Tracker",
+  "short_name": "MoneyRate",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#03173d",
+  "description": "Track currency exchange rates and get the best time to convert your money with MoneyRate.",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}
