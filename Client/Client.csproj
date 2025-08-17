@@ -15,6 +15,6 @@
     <ProjectReference Include="..\SmartForexReminder.Private\SmartForexReminder.Private.csproj" />
  </ItemGroup>
   <ItemGroup>
-    <BlazorWebAssemblyLazyLoad Include="SmartForexReminder.Private.dll" />\
+    <BlazorWebAssemblyLazyLoad Include="SmartForexReminder.Private.dll" />
   </ItemGroup>
 </Project>
