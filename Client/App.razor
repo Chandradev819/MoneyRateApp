@@ -18,7 +18,7 @@
     {
         if (args.Path.StartsWith("dashboard") || args.Path.StartsWith("rate-rules"))
         {
-            await AssemblyLoader.LoadAssembliesAsync(new[] { "SmartForexReminder.Private.dll" });
+            await AssemblyLoader.LoadAssembliesAsync(new[] { "SmartForexReminder.Private.wasm" });
         }
     }
 }
