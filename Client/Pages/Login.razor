@@ -29,11 +29,15 @@
 @code {
     private void LoginWithGitHub()
     {
-        Navigation.NavigateTo("/.auth/login/github", forceLoad: true);
+        // Navigation.NavigateTo("/.auth/login/github", forceLoad: true);
+        //HardCoded URL
+        Navigation.NavigateTo("/dashboard", forceLoad: false);
     }
 
     private void LoginWithGoogle()
     {
-        Navigation.NavigateTo("/.auth/login/google", forceLoad: true);
+        //Navigation.NavigateTo("/.auth/login/google", forceLoad: true);
+        //HardCoded URL
+        Navigation.NavigateTo("/dashboard", forceLoad: false);
     }
 }

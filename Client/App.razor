@@ -1,12 +1,24 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Services
+@inject LazyAssemblyLoader AssemblyLoader
+
+<Router AppAssembly="@typeof(Program).Assembly"
+        OnNavigateAsync="OnNavigateAsync">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
-        <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+            <p>Sorry, page not found.</p>
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    private async Task OnNavigateAsync(NavigationContext args)
+    {
+        if (args.Path.StartsWith("dashboard") || args.Path.StartsWith("rate-rules"))
+        {
+            await AssemblyLoader.LoadAssembliesAsync(new[] { "SmartForexReminder.Private.dll" });
+        }
+    }
+}

@@ -1,0 +1,87 @@
+﻿@page "/rate-rules"
+@layout PrivateLayout
+
+<div class="container mt-4">
+    <h2 class="mb-3">⚙️ Rate Rules</h2>
+    <p class="lead">Define when you'd like to be notified about favorable forex conditions.</p>
+
+    <!-- Rule Summary Cards -->
+    <div class="row mb-4">
+        @foreach (var rule in rateRules)
+        {
+            <div class="col-md-4">
+                <div class="card border-@GetBorderClass(rule.Status) shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@rule.CurrencyPair</h5>
+                        <p class="card-text">Notify when rate is <strong>@rule.Condition</strong></p>
+                        <span class="badge @GetBadgeClass(rule.Status)">@rule.Status</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Editable Table -->
+    <h4 class="mb-3">🔧 Manage Rules</h4>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Currency</th>
+                <th>Condition</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rule in rateRules)
+            {
+                <tr>
+                    <td>@rule.CurrencyPair</td>
+                    <td>@rule.Condition</td>
+                    <td><span class="badge @GetBadgeClass(rule.Status)">@rule.Status</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-warning">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger ms-1">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- CTA -->
+    <div class="text-end mt-4">
+        <button class="btn btn-primary">➕ Add New Rule</button>
+    </div>
+</div>
+
+@code {
+    public class RateRule
+    {
+        public string CurrencyPair { get; set; } = string.Empty;
+        public string Condition { get; set; } = string.Empty;
+        public string Status { get; set; } = "Active"; // Active, Pending, Inactive
+    }
+
+    List<RateRule> rateRules = new()
+    {
+        new RateRule { CurrencyPair = "USD → INR", Condition = "above ₹83", Status = "Active" },
+        new RateRule { CurrencyPair = "EUR → INR", Condition = "below ₹90", Status = "Pending" },
+        new RateRule { CurrencyPair = "GBP → INR", Condition = "above ₹107", Status = "Inactive" }
+    };
+
+    string GetBadgeClass(string status) => status switch
+    {
+        "Active" => "bg-info",
+        "Pending" => "bg-warning text-dark",
+        "Inactive" => "bg-secondary",
+        _ => "bg-light"
+    };
+
+    string GetBorderClass(string status) => status switch
+    {
+        "Active" => "primary",
+        "Pending" => "danger",
+        "Inactive" => "secondary",
+        _ => "light"
+    };
+}

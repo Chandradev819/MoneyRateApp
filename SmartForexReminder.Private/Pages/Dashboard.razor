@@ -1,0 +1,70 @@
+﻿@page "/dashboard"
+@layout PrivateLayout
+
+<div class="container mt-4">
+    <h2 class="mb-3">📊 Forex Dashboard</h2>
+    <p class="lead">Welcome back, Chandradev. Here's your latest snapshot:</p>
+
+    <div class="row">
+        <!-- Exchange Rate Cards -->
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">USD → INR</h5>
+                    <p class="card-text display-6">₹83.25</p>
+                    <span class="badge bg-success">↑ +0.12</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">EUR → INR</h5>
+                    <p class="card-text display-6">₹91.10</p>
+                    <span class="badge bg-danger">↓ -0.08</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">GBP → INR</h5>
+                    <p class="card-text display-6">₹106.45</p>
+                    <span class="badge bg-success">↑ +0.20</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reminder Section -->
+    <div class="alert alert-info mt-4">
+        <strong>Next Reminder:</strong> Convert <strong>USD</strong> on <strong>Aug 18</strong>
+        <span class="text-muted">(Rule: "Above ₹83")</span>
+    </div>
+
+    <!-- Historical Trends Table -->
+    <h4 class="mt-5">📈 7-Day Trend Snapshot</h4>
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Date</th>
+                <th>USD → INR</th>
+                <th>EUR → INR</th>
+                <th>GBP → INR</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Aug 10</td><td>₹82.90</td><td>₹90.80</td><td>₹106.10</td></tr>
+            <tr><td>Aug 11</td><td>₹83.00</td><td>₹90.95</td><td>₹106.20</td></tr>
+            <tr><td>Aug 12</td><td>₹83.10</td><td>₹91.00</td><td>₹106.30</td></tr>
+            <tr><td>Aug 13</td><td>₹83.20</td><td>₹91.05</td><td>₹106.35</td></tr>
+            <tr><td>Aug 14</td><td>₹83.25</td><td>₹91.10</td><td>₹106.45</td></tr>
+        </tbody>
+    </table>
+
+    <!-- CTA -->
+    <div class="text-end mt-4">
+        <a href="/rate-rules" class="btn btn-outline-primary">Manage Rate Rules</a>
+        <a href="/optimizer" class="btn btn-primary ms-2">Run Timing Optimizer</a>
+    </div>
+</div>

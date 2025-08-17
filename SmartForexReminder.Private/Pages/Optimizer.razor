@@ -1,0 +1,69 @@
+﻿@page "/optimizer"
+@layout PrivateLayout
+
+<div class="container mt-4">
+    <h2 class="mb-3">🧠 Timing Optimizer</h2>
+    <p class="lead">Based on recent trends, here’s what we suggest:</p>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Currency</th>
+                <th>Recommendation</th>
+                <th>Suggested Date</th>
+                <th>Projected Rate</th>
+                <th>Trend</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prediction in predictions)
+            {
+                <tr>
+                    <td>@prediction.CurrencyPair</td>
+                    <td>
+                        <span class="badge @(GetBadgeClass(prediction.Recommendation))">@prediction.Recommendation</span>
+                    </td>
+                    <td>@prediction.SuggestedDate.ToString("MMM dd")</td>
+                    <td>₹@prediction.ProjectedRate</td>
+                    <td>
+                        <span class="badge @(GetTrendClass(prediction.Trend))">@prediction.Trend</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p class="text-muted mt-3"><em>Mock data based on 7-day moving average. Real predictions will be powered by your API layer.</em></p>
+</div>
+
+@code {
+    public class RatePrediction
+    {
+        public string CurrencyPair { get; set; } = string.Empty;
+        public string Recommendation { get; set; } = string.Empty;
+        public DateTime SuggestedDate { get; set; }
+        public decimal ProjectedRate { get; set; }
+        public string Trend { get; set; } = "Stable"; // Up, Down, Stable
+    }
+
+    List<RatePrediction> predictions = new()
+    {
+        new RatePrediction { CurrencyPair = "USD → INR", Recommendation = "Convert", SuggestedDate = new DateTime(2025, 8, 18), ProjectedRate = 83.40m, Trend = "Up" },
+        new RatePrediction { CurrencyPair = "EUR → INR", Recommendation = "Hold", SuggestedDate = new DateTime(2025, 8, 22), ProjectedRate = 89.80m, Trend = "Down" },
+        new RatePrediction { CurrencyPair = "GBP → INR", Recommendation = "Convert", SuggestedDate = new DateTime(2025, 8, 19), ProjectedRate = 106.90m, Trend = "Up" }
+    };
+
+    string GetBadgeClass(string recommendation) => recommendation switch
+    {
+        "Convert" => "bg-success",
+        "Hold" => "bg-warning text-dark",
+        _ => "bg-secondary"
+    };
+
+    string GetTrendClass(string trend) => trend switch
+    {
+        "Up" => "bg-success",
+        "Down" => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
