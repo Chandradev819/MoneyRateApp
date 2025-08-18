@@ -1,0 +1,73 @@
+﻿@page "/features"
+@layout PublicLayout
+
+<PageTitle>Features - SmartForexReminder</PageTitle>
+
+<div class="container py-5">
+    <h1 class="text-center mb-4">Why SmartForexReminder?</h1>
+
+    <!-- Feature Highlights -->
+    <section class="mb-5">
+        <div class="row">
+            @foreach (var feature in Features)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h4 class="card-title">@feature.Title</h4>
+                            <p class="card-text">@feature.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="text-center mt-5">
+        <h3>Start automating your forex decisions today</h3>
+        <a href="/signup" class="btn btn-primary btn-lg mt-3">Try it Free</a>
+    </section>
+</div>
+
+@code {
+    private List<FeatureItem> Features = new()
+    {
+        new FeatureItem
+        {
+            Title = "📈 Real-Time Rate Monitoring",
+            Description = "Track currency pairs with precision and get notified when your conditions are met."
+        },
+        new FeatureItem
+        {
+            Title = "🔔 Custom Reminder Rules",
+            Description = "Set thresholds, directions, and conditions tailored to your trading strategy."
+        },
+        new FeatureItem
+        {
+            Title = "🧠 Decision-Support Insights",
+            Description = "Get contextual suggestions based on market behavior and your rule history."
+        },
+        new FeatureItem
+        {
+            Title = "📊 Trigger History Dashboard",
+            Description = "Review past reminders, rule performance, and optimize your setup."
+        },
+        new FeatureItem
+        {
+            Title = "🔒 Private Rule Management",
+            Description = "Your rules are securely stored and only loaded when needed via lazy loading."
+        },
+        new FeatureItem
+        {
+            Title = "⚡ Modular & Fast",
+            Description = "Built with Blazor WebAssembly and Razor Class Libraries for lean performance."
+        }
+    };
+
+    public class FeatureItem
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
+}
