@@ -2,6 +2,7 @@
 @inject LazyAssemblyLoader AssemblyLoader
 
 <Router AppAssembly="@typeof(Program).Assembly"
+        AdditionalAssemblies="@lazyLoadedAssemblies"
         OnNavigateAsync="OnNavigateAsync">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
@@ -14,11 +15,14 @@
 </Router>
 
 @code {
+    private List<System.Reflection.Assembly> lazyLoadedAssemblies = new();
+
     private async Task OnNavigateAsync(NavigationContext args)
     {
         if (args.Path.StartsWith("dashboard") || args.Path.StartsWith("rate-rules"))
         {
-            await AssemblyLoader.LoadAssembliesAsync(new[] { "SmartForexReminder.Private.wasm" });
+            var assemblies = await AssemblyLoader.LoadAssembliesAsync(new[] { "SmartForexReminder.Private.wasm" });
+            lazyLoadedAssemblies.AddRange(assemblies);
         }
     }
 }
