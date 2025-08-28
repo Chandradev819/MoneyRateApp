@@ -1,5 +1,6 @@
 ﻿@page "/rate-rules"
 @layout PrivateLayout
+@inject HttpClient Http
 
 <div class="container mt-4">
     <h2 class="mb-3">⚙️ Rate Rules</h2>
@@ -7,17 +8,28 @@
 
     <!-- Rule Summary Cards -->
     <div class="row mb-4">
-        @foreach (var rule in rateRules)
+        @if (rateRules.Count == 0)
         {
-            <div class="col-md-4">
-                <div class="card border-@GetBorderClass(rule.Status) shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">@rule.CurrencyPair</h5>
-                        <p class="card-text">Notify when rate is <strong>@rule.Condition</strong></p>
-                        <span class="badge @GetBadgeClass(rule.Status)">@rule.Status</span>
+            <p class="text-muted">No rules yet. Add one below 👇</p>
+        }
+        else
+        {
+            @foreach (var rule in rateRules)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card border-@GetBorderClass(rule.Status) shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">@rule.CurrencyPair</h5>
+                            <p class="card-text">
+                                Notify when rate is <strong>@rule.Condition</strong>
+                                <br />
+                                Target: <strong>@rule.TargetRate</strong>
+                            </p>
+                            <span class="badge @GetBadgeClass(rule.Status)">@rule.Status</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         }
     </div>
 
@@ -27,6 +39,7 @@
         <thead class="table-light">
             <tr>
                 <th>Currency</th>
+                <th>Target Rate</th>
                 <th>Condition</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -37,11 +50,12 @@
             {
                 <tr>
                     <td>@rule.CurrencyPair</td>
+                    <td>@rule.TargetRate</td>
                     <td>@rule.Condition</td>
                     <td><span class="badge @GetBadgeClass(rule.Status)">@rule.Status</span></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-warning">Edit</button>
-                        <button class="btn btn-sm btn-outline-danger ms-1">Delete</button>
+                        <button class="btn btn-sm btn-outline-warning" @onclick="() => EditRule(rule)">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger ms-1" @onclick="() => DeleteRule(rule.RateRuleId)">Delete</button>
                     </td>
                 </tr>
             }
@@ -50,26 +64,144 @@
 
     <!-- CTA -->
     <div class="text-end mt-4">
-        <button class="btn btn-primary">➕ Add New Rule</button>
+        <button class="btn btn-primary" @onclick="NewRule">➕ Add New Rule</button>
     </div>
 </div>
 
+<!-- Modal for Add/Edit -->
+@if (showForm)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@((currentRule.RateRuleId == 0 ? "Add" : "Edit") + " Rule")</h5>
+                    <button type="button" class="btn-close" @onclick="() => showForm = false"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Currency Pair</label>
+                        <input class="form-control" @bind="currentRule.CurrencyPair" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Target Rate</label>
+                        <input type="number" step="0.0001" class="form-control" @bind="currentRule.TargetRate" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Condition</label>
+                        <input class="form-control" @bind="currentRule.Condition" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" @bind="currentRule.Status">
+                            <option>Active</option>
+                            <option>Pending</option>
+                            <option>Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="() => showForm = false">Cancel</button>
+                    <button class="btn btn-primary" @onclick="SaveRule">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
-    public class RateRule
+    private List<RateRuleVM> rateRules = new();
+    private RateRuleVM currentRule = new();
+    private bool showForm = false;
+
+    // hardcoded UserId=1 for demo (can come from auth/session)
+    private int userId = 1;
+    private string baseUrl = "http://localhost:7071/api/ratereules";
+
+    protected override async Task OnInitializedAsync()
     {
-        public string CurrencyPair { get; set; } = string.Empty;
-        public string Condition { get; set; } = string.Empty;
-        public string Status { get; set; } = "Active"; // Active, Pending, Inactive
+        await LoadRules();
     }
 
-    List<RateRule> rateRules = new()
+    private async Task LoadRules()
     {
-        new RateRule { CurrencyPair = "USD → INR", Condition = "above ₹83", Status = "Active" },
-        new RateRule { CurrencyPair = "EUR → INR", Condition = "below ₹90", Status = "Pending" },
-        new RateRule { CurrencyPair = "GBP → INR", Condition = "above ₹107", Status = "Inactive" }
-    };
+        try
+        {
+            var response = await Http.GetAsync($"{baseUrl}/user/{userId}");
+            if (response.IsSuccessStatusCode)
+            {
+                rateRules = await response.Content.ReadFromJsonAsync<List<RateRuleVM>>() ?? new();
+            }
+            else
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"LoadRules failed: {response.StatusCode} {body}");
+                rateRules = new();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error loading rules: " + ex.Message);
+        }
+    }
 
-    string GetBadgeClass(string status) => status switch
+    private void NewRule()
+    {
+        currentRule = new RateRuleVM { Status = "Active" };
+        showForm = true;
+    }
+
+    private void EditRule(RateRuleVM rule)
+    {
+        currentRule = new RateRuleVM
+        {
+            RateRuleId = rule.RateRuleId,
+            UserId = rule.UserId,
+            CurrencyPair = rule.CurrencyPair,
+            TargetRate = rule.TargetRate,
+            Condition = rule.Condition,
+            Status = rule.Status
+        };
+        showForm = true;
+    }
+
+    private async Task SaveRule()
+    {
+        try
+        {
+            if (currentRule.RateRuleId == 0)
+            {
+                currentRule.UserId = userId;
+                await Http.PostAsJsonAsync(baseUrl, currentRule);
+            }
+            else
+            {
+                await Http.PutAsJsonAsync($"{baseUrl}/{currentRule.RateRuleId}", currentRule);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error saving rule: " + ex.Message);
+        }
+
+        showForm = false;
+        await LoadRules();
+    }
+
+    private async Task DeleteRule(int rateRuleId)
+    {
+        try
+        {
+            await Http.DeleteAsync($"{baseUrl}/{rateRuleId}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error deleting rule: " + ex.Message);
+        }
+        await LoadRules();
+    }
+
+    private string GetBadgeClass(string status) => status switch
     {
         "Active" => "bg-info",
         "Pending" => "bg-warning text-dark",
@@ -77,11 +209,22 @@
         _ => "bg-light"
     };
 
-    string GetBorderClass(string status) => status switch
+    private string GetBorderClass(string status) => status switch
     {
         "Active" => "primary",
         "Pending" => "danger",
         "Inactive" => "secondary",
         _ => "light"
     };
+
+    public class RateRuleVM
+    {
+        public int RateRuleId { get; set; }
+        public int UserId { get; set; }
+        public string CurrencyPair { get; set; } = string.Empty;
+        public decimal TargetRate { get; set; }
+        public string Condition { get; set; } = string.Empty;
+        public string Status { get; set; } = "Active";
+    }
 }
+

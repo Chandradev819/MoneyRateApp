@@ -4,7 +4,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Shared;
 
-namespace Api
+namespace Api.Functions
 {
     public class HttpTrigger
     {
