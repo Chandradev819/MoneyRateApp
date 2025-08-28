@@ -1,31 +1,33 @@
-﻿namespace Shared.ViewModel
-{
-    using System;
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
-    public class RateRuleViewModel
+namespace Shared.ViewModel
+{
+    public class RateRuleVM
     {
         public int RateRuleId { get; set; }
-
-        [Required(ErrorMessage = "User is required")]
         public int UserId { get; set; }
 
-        [Required(ErrorMessage = "Currency Pair is required")]
-        [StringLength(10, ErrorMessage = "Currency Pair cannot be longer than 10 characters")]
+        [Required(ErrorMessage = "Currency pair is required")]
+        [RegularExpression(@"^[A-Z]{3}/[A-Z]{3}$", ErrorMessage = "Format must be like EUR/USD")]
         public string CurrencyPair { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Target Rate is required")]
-        [Range(0.0001, double.MaxValue, ErrorMessage = "Target Rate must be greater than zero")]
+        [Required(ErrorMessage = "Target rate is required")]
+        [Range(0.0001, 10000, ErrorMessage = "Target rate must be positive")]
         public decimal TargetRate { get; set; }
 
         [Required(ErrorMessage = "Condition is required")]
-        [RegularExpression("Above|Below", ErrorMessage = "Condition must be either 'Above' or 'Below'")]
-        public string Condition { get; set; } = string.Empty;
+        public RateCondition Condition { get; set; }
 
-        public bool IsActive { get; set; }
-
-        [Required]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [Required(ErrorMessage = "Status is required")]
+        public string Status { get; set; } = "Active";
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum RateCondition
+    {
+        Above,
+        Below,
+        Equal
+    }
 }

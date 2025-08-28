@@ -1,5 +1,6 @@
 ﻿@page "/rate-rules"
 @using System.Text.Json.Serialization
+@using Shared.ViewModel
 @layout PrivateLayout
 @inject HttpClient Http
 
@@ -72,46 +73,56 @@
 <!-- Modal for Add/Edit -->
 @if (showForm)
 {
-    <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">@((currentRule.RateRuleId == 0 ? "Add" : "Edit") + " Rule")</h5>
-                    <button type="button" class="btn-close" @onclick="() => showForm = false"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Currency Pair</label>
-                        <input class="form-control" @bind="currentRule.CurrencyPair" />
+    <EditForm Model="currentRule" OnValidSubmit="SaveRule">
+        <DataAnnotationsValidator />
+        <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content rounded-4 shadow-lg">
+                    <div class="modal-header bg-primary text-white rounded-top-4">
+                        <h5 class="modal-title">@((currentRule.RateRuleId == 0 ? "Add" : "Edit") + " Rule")</h5>
+                        <button type="button" class="btn-close btn-close-white" @onclick="() => showForm = false"></button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Target Rate</label>
-                        <input type="number" step="0.0001" class="form-control" @bind="currentRule.TargetRate" />
+                    <div class="modal-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Currency Pair</label>
+                                <InputText class="form-control" @bind-Value="currentRule.CurrencyPair" />
+                                <ValidationMessage For="@(() => currentRule.CurrencyPair)" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Target Rate</label>
+                                <InputNumber class="form-control" @bind-Value="currentRule.TargetRate" />
+                                <ValidationMessage For="@(() => currentRule.TargetRate)" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Condition</label>
+                                <InputSelect class="form-select" @bind-Value="currentRule.Condition">
+                                    @foreach (var cond in Enum.GetValues<RateCondition>())
+                                    {
+                                        <option value="@cond">@cond</option>
+                                    }
+                                </InputSelect>
+                                <ValidationMessage For="@(() => currentRule.Condition)" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Status</label>
+                                <InputSelect class="form-select" @bind-Value="currentRule.Status">
+                                    <option>Active</option>
+                                    <option>Pending</option>
+                                    <option>Inactive</option>
+                                </InputSelect>
+                                <ValidationMessage For="@(() => currentRule.Status)" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Condition</label>
-                        <select class="form-select" @bind="currentRule.Condition">
-                            <option value="Above">Above</option>
-                            <option value="Below">Below</option>
-                            <option value="Equal">Equal</option>
-                        </select>
+                    <div class="modal-footer border-top-0 justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary fw-semibold" @onclick="() => showForm = false">Cancel</button>
+                        <button type="submit" class="btn btn-primary fw-semibold">Save</button>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" @bind="currentRule.Status">
-                            <option>Active</option>
-                            <option>Pending</option>
-                            <option>Inactive</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" @onclick="() => showForm = false">Cancel</button>
-                    <button class="btn btn-primary" @onclick="SaveRule">Save</button>
                 </div>
             </div>
         </div>
-    </div>
+    </EditForm>
 }
 
 @code {
@@ -121,7 +132,7 @@
 
     // hardcoded UserId=1 for demo (can come from auth/session)
     private int userId = 1;
-    private string baseUrl = "http://localhost:7071/api/raterules";
+    private string baseUrl = "api/raterules";
 
     protected override async Task OnInitializedAsync()
     {
@@ -132,7 +143,6 @@
     {
         try
         {
-            // ✅ FIX: removed ":int" style syntax
             var response = await Http.GetAsync($"{baseUrl}/user/{userId}");
             if (response.IsSuccessStatusCode)
             {
@@ -222,22 +232,4 @@
         "Inactive" => "secondary",
         _ => "light"
     };
-
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum RateCondition
-    {
-        Above,
-        Below,
-        Equal
-    }
-
-    public class RateRuleVM
-    {
-        public int RateRuleId { get; set; }
-        public int UserId { get; set; }
-        public string CurrencyPair { get; set; } = string.Empty;
-        public decimal TargetRate { get; set; }
-        public RateCondition Condition { get; set; }
-        public string Status { get; set; } = "Active";
-    }
 }
