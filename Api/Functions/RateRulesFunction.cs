@@ -21,7 +21,7 @@ namespace Api.Functions
 
         [Function("GetUserRateRules")]
         public async Task<HttpResponseData> GetUserRateRules(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ratereules/user/{userId:int}")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "raterules/user/{userId:int}")] HttpRequestData req,
             int userId)
         {
             var result = await _rateRulesService.GetUserRateRulesAsync(userId);
@@ -33,7 +33,7 @@ namespace Api.Functions
 
         [Function("GetRateRuleById")]
         public async Task<HttpResponseData> GetRateRuleById(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "ratereules/{id:int}")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "raterules/{id:int}")] HttpRequestData req,
             int id)
         {
             var rule = await _rateRulesService.GetByIdAsync(id);
@@ -52,7 +52,7 @@ namespace Api.Functions
 
         [Function("AddRateRule")]
         public async Task<HttpResponseData> AddRateRule(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "ratereules")] HttpRequestData req)
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "raterules")] HttpRequestData req)
         {
             var body = await JsonSerializer.DeserializeAsync<RateRule>(req.Body,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -73,7 +73,7 @@ namespace Api.Functions
 
         [Function("UpdateRateRule")]
         public async Task<HttpResponseData> UpdateRateRule(
-            [HttpTrigger(AuthorizationLevel.Function, "put", Route = "ratereules/{id:int}")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Function, "put", Route = "raterules/{id:int}")] HttpRequestData req,
             int id)
         {
             var body = await JsonSerializer.DeserializeAsync<RateRule>(req.Body,
@@ -95,7 +95,7 @@ namespace Api.Functions
 
         [Function("DeleteRateRule")]
         public async Task<HttpResponseData> DeleteRateRule(
-            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "ratereules/{id:int}")] HttpRequestData req,
+            [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "raterules/{id:int}")] HttpRequestData req,
             int id)
         {
             await _rateRulesService.DeleteAsync(id);

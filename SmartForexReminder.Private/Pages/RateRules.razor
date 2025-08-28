@@ -1,4 +1,5 @@
 ﻿@page "/rate-rules"
+@using System.Text.Json.Serialization
 @layout PrivateLayout
 @inject HttpClient Http
 
@@ -89,7 +90,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Condition</label>
-                        <input class="form-control" @bind="currentRule.Condition" />
+                        <select class="form-select" @bind="currentRule.Condition">
+                            <option value="Above">Above</option>
+                            <option value="Below">Below</option>
+                            <option value="Equal">Equal</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Status</label>
@@ -116,7 +121,7 @@
 
     // hardcoded UserId=1 for demo (can come from auth/session)
     private int userId = 1;
-    private string baseUrl = "http://localhost:7071/api/ratereules";
+    private string baseUrl = "http://localhost:7071/api/raterules";
 
     protected override async Task OnInitializedAsync()
     {
@@ -127,6 +132,7 @@
     {
         try
         {
+            // ✅ FIX: removed ":int" style syntax
             var response = await Http.GetAsync($"{baseUrl}/user/{userId}");
             if (response.IsSuccessStatusCode)
             {
@@ -217,14 +223,21 @@
         _ => "light"
     };
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum RateCondition
+    {
+        Above,
+        Below,
+        Equal
+    }
+
     public class RateRuleVM
     {
         public int RateRuleId { get; set; }
         public int UserId { get; set; }
         public string CurrencyPair { get; set; } = string.Empty;
         public decimal TargetRate { get; set; }
-        public string Condition { get; set; } = string.Empty;
+        public RateCondition Condition { get; set; }
         public string Status { get; set; } = "Active";
     }
 }
-
